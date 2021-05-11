@@ -1,0 +1,101 @@
+/* ROLL NUMBER-17CS10036
+   NAME-PRAKHAR BINDAL
+   PC NUMBER-88 */
+CREATE TABLE Student
+(
+  RollNo int,
+  Name varchar(20),
+  YearOfAdmission int
+);
+CREATE TABLE Friend
+(
+  OwnRoll int,
+  FriendRoll int
+);
+CREATE TABLE Movie
+(
+	  MID int,
+	  Title varchar(30),
+	  YearOfRelease int,
+	  DirectorName varchar(20)
+);
+CREATE TABLE Rating
+(
+	RollNo int,
+	MID int,
+	RatingDate date,
+	Rating int
+);
+1)
+SELECT DISTINCT S.RollNo,S.Name,S.YearOfAdmission
+FROM Student S,Friend T,Student U
+WHERE S.RollNo=T.FriendRoll and T.OwnRoll=U.RollNo and U.Name not like '%Amit%'; 
+
+2)
+SELECT DISTINCT M.Title
+FROM Movie M,Rating R
+WHERE M.MID=R.MID;
+
+3)
+SELECT M.DirectorName,M.Title,R.Rating
+FROM Movie M,Rating R
+GROUP BY M.MID
+WHERE M.MID=R.MID
+HAVING (SELECT MIN(SUM(B.Rating)) FROM Movie A,Rating B WHERE A.MID=B.MID and A.MID=M.MID)=R.Rating;
+
+4) 
+SELECT S1.RollNo,S1.Name,S2.RollNo,S2.Name,M1.Title,R1.Rating
+FROM Student S1,Student S2,Movie M1,Movie M2,Rating R1,Rating R2
+WHERE M1.MID=M2.MID and R1.MID=R2.MID and R1.Rating=R2.Rating and S1.RollNo=R1.RollNo and S2.RollNo=R2.RollNo;
+
+5)
+SELECT avg(NUMBER_OF_FRIENDS) as Average_Friends
+FROM
+(
+	SELECT count(*) AS NUMBER_OF_FRIENDS
+	FROM Student S,Friend F
+	WHERE S.RollNo=F.FriendRoll
+)AS NUMBER_OF_FRIENDS;
+
+6)
+SELECT M.Title,M.YearOfRelease,S.RollNo,S.YearOfAdmission
+FROM Movie M,Student S,Rating R
+WHERE M.YearOfRelease<S.YearOfAdmission and M.MID=R.MID and S.RollNo=R.RollNo and 
+(SELECT count(*)
+ FROM Movie T,Student U,Rating P
+ WHERE T.YearOfRelease<U.YearOfAdmission and T.MID=P.MID and U.RollNo=P.RollNo
+)>=4;
+
+7)
+SELECT S.RollNo,avg(R3.Rating),F.OwnRoll,avg(R2.Rating)
+FROM Student S,Friend F,Movie M,Rating R1,Rating R2,Rating R3
+WHERE S.RollNo=F.FriendRoll and R1.MID=R2.MID and R1.RollNo=S.RollNo and R2.RollNo=F.OwnRoll and R3.RollNo=S.RollNo
+GROUP BY S.RollNo,F.OwnRoll 
+HAVING avg(R3.Rating)<avg(R2.Rating);
+
+8)
+SELECT DISTINCT M.Title,DISTINCT_RATINGS as NumberOfStudentRatings
+FROM Movie M,Rating R and M.MID=R.MID
+WHERE DISTINCT_RATINGS=(SELECT DISTINCT Salary FROM Rating R ORDER BY Salary DESC LIMIT 1 OFFSET (3))
+and M.
+
+
+9)
+SELECT S.RollNo,S.Name,T.RollNo,T.Name
+FROM Student S,Student T,Friend F
+WHERE S.RollNo=F.FriendRoll and T.RollNo=F.OwnRoll and 
+(
+	 SELECT count(*)
+	 FROM Rating R1,Rating R2
+	 WHERE R1.RollNo=S.RollNo and R2.RollNo=T.RollNo and R1.MID=R2.MID 
+)=0;
+
+10)
+SELECT 
+
+
+BONUS)
+SELECT S.RollNo,S.Name,M.Title,R1.RatingDate,R1.Rating,R2.RatingDate,R2.Rating
+FROM Student S,Movie M,Rating R1,Rating R2
+WHERE M.MID=R1.MID and M.MID=R2.MID and S.RollNo=R1.RollNo and S.RollNo=R2.RollNo and 
+(R2.Rating-R1.Rating>1 or R1.Rating-R2.Rating>1) and (R2.RatingDate=R1.RatingDate+interval 1 day or R1.RatingDate=R2.RatingDate + interval 1 day);

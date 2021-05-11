@@ -1,0 +1,106 @@
+CREATE TABLE Contingent
+(
+	Name_of_IIT varchar(255),
+	Score int,
+	Position int,
+	Contingent_ID varchar(255)
+);
+CREATE TABLE Score
+(
+	Position int,
+	Name varchar(255),
+	Individual_Scores int,
+	Team_Scores int
+);
+CREATE TABLE Events
+(
+	Event_Name varchar(255),
+	IIT_Name varchar(255),
+	Player_ID varchar(255),
+	Player_Name varchar(255)
+);
+CREATE TABLE Team_Participant
+(
+	Player_ID varchar(255),
+	Player_Name varchar(255),
+	Institute varchar(255),
+	Number_Of_Events int
+);
+CREATE TABLE Individual_Participant
+(
+	Player_ID varchar(255),
+	Player_Name varchar(255),
+	Institute varchar(255),
+	NUmber_Of_Events int
+);
+CREATE TABLE Team_Score
+(
+	Player_ID varchar(255),
+	Player_Name varchar(255),
+	Total_Points int,
+	Team_Name varchar(255)
+);
+CREATE TABLE Individual_Score
+(
+	Player_ID varchar(255),
+	Player_Name varchar(255),
+	Total_Points int,
+	Event varchar(255)
+);
+CREATE TABLE Winners
+(
+	Player_ID varchar(255),
+	Player_Name varchar(255),
+	Event_Name varchar(255),
+	Institute varchar(255)
+);
+CREATE TABLE Score_Event
+(
+	Position int,
+	Participants varchar(255),
+	Score int,
+	Institute_Name varchar(255)
+);
+SQL Queries
+
+1. 
+SELECT Event_Name,IIT_Name,Player_ID,Player_Name
+FROM Events
+GROUP BY Event_Name;
+
+2.SELECT Institute,Player_ID,Player_Name
+FROM Team_Participant
+WHERE 'No_Of_Events'=1
+GROUP BY Institute;
+
+SELECT Institute,Player_ID,Player_Name
+FROM Individual_Participant
+WHERE 'No_Of_Events'=1
+GROUP BY Institute;
+
+3.SELECT Player_Name,Event_Name,Institute,Player_ID,Count(*)
+FROM Events
+WHERE Count(*)=1
+GROUP BY Institute;
+
+4.SELECT Player_ID,Player_Name,Institute,No_Of_Events as T
+FROM Team_Participant
+WHERE 'No_Of_Events'>1 (SELECT No_Of_Events,Count(*)
+	FROM Individual_Participant
+	WHERE  Player_ID=T.Player_ID;
+	) AND Count(*)=0
+ORDER BY No_Of_Events [DESC];
+
+5.SELECT Position,Name 
+FROM Score
+ORDER BY [Individual_Scores|Team_Scores][DESC|ASC];
+
+6.SELECT Name,Position,Individual_Scores,Team_Scores
+FROM Score
+WHERE Team_Scores<Individual_Scores
+GROUP BY Name;
+7.SELECT Name,Position,Individual_Scores,Team_Scores
+FROM Score
+WHERE Individual_Scores>(SELECT AVG(Team_Scores)
+FROM Score;)
+GROUP BY Name;
